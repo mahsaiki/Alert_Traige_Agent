@@ -151,7 +151,7 @@ with st.sidebar:
     new_theme = st.radio("Theme", ["light", "dark"], index=0 if st.session_state.theme == 'light' else 1)
     if new_theme != st.session_state.theme:
         st.session_state.theme = new_theme
-        st.experimental_rerun()
+        st.rerun()
     
     st.markdown("---")
     
@@ -166,7 +166,7 @@ with st.sidebar:
     for page_name in pages.keys():
         if st.button(page_name, use_container_width=True):
             st.session_state.current_page = page_name
-            st.experimental_rerun()
+            st.rerun()
     
     st.markdown("---")
     
@@ -196,7 +196,7 @@ with st.expander("Add New Log Source", expanded=True):
         source_path = st.text_input("Source Path/URL")
         collection_interval = st.selectbox("Collection Interval", ["1 minute", "5 minutes", "15 minutes", "30 minutes", "1 hour"])
     
-    if st.button("Add Source"):
+    if st.button("Add Source", use_container_width=True):
         if source_name and source_path:
             new_source = {
                 "name": source_name,
@@ -210,6 +210,7 @@ with st.expander("Add New Log Source", expanded=True):
             st.success(f"Added new log source: {source_name}")
         else:
             st.error("Please fill in all required fields")
+        st.rerun()
 
 # Display existing log sources
 if st.session_state.log_sources:
@@ -232,7 +233,7 @@ if st.session_state.log_sources:
             with col4:
                 if st.button("Remove Source", key=f"remove_{i}"):
                     st.session_state.log_sources.pop(i)
-                    st.experimental_rerun()
+                    st.rerun()
 else:
     st.info("No log sources configured. Add a new source to get started.")
 

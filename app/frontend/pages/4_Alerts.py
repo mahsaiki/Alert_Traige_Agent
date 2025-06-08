@@ -151,7 +151,7 @@ with st.sidebar:
     new_theme = st.radio("Theme", ["light", "dark"], index=0 if st.session_state.theme == 'light' else 1)
     if new_theme != st.session_state.theme:
         st.session_state.theme = new_theme
-        st.experimental_rerun()
+        st.rerun()
     
     st.markdown("---")
     
@@ -166,7 +166,7 @@ with st.sidebar:
     for page_name in pages.keys():
         if st.button(page_name, use_container_width=True):
             st.session_state.current_page = page_name
-            st.experimental_rerun()
+            st.rerun()
     
     st.markdown("---")
     
@@ -230,7 +230,7 @@ with st.expander("Configure New Alert", expanded=True):
         alert_severity = st.selectbox("Severity", ["High", "Medium", "Low"])
         notification_method = st.selectbox("Notification Method", ["Email", "Slack", "Webhook"])
     
-    if st.button("Add Alert"):
+    if st.button("Add Alert", use_container_width=True):
         if alert_name:
             new_alert = {
                 "name": alert_name,
@@ -242,6 +242,7 @@ with st.expander("Configure New Alert", expanded=True):
             }
             st.session_state.alerts.append(new_alert)
             st.success(f"Added new alert: {alert_name}")
+            st.rerun()
         else:
             st.error("Please provide an alert name")
 
@@ -266,7 +267,7 @@ if st.session_state.alerts:
             with col4:
                 if st.button("Remove Alert", key=f"remove_{i}"):
                     st.session_state.alerts.pop(i)
-                    st.experimental_rerun()
+                    st.rerun()
 else:
     st.info("No alerts configured. Add a new alert to get started.")
 

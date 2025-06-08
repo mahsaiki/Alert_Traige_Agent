@@ -170,7 +170,7 @@ with st.sidebar:
     new_theme = st.radio("Theme", ["light", "dark"], index=0 if st.session_state.theme == 'light' else 1)
     if new_theme != st.session_state.theme:
         st.session_state.theme = new_theme
-        st.experimental_rerun()
+        st.rerun()
     
     st.markdown("---")
     
@@ -185,7 +185,7 @@ with st.sidebar:
     for page_name in pages.keys():
         if st.button(page_name, use_container_width=True):
             st.session_state.current_page = page_name
-            st.experimental_rerun()
+            st.rerun()
     
     st.markdown("---")
     

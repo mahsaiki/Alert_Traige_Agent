@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  backend:
+    build: .
+    container_name: alert-triage-backend
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app/app
+      - ./scripts:/app/scripts
+  db:
+    image: postgres:15
+    container_name: alert-triage-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: alert_triage
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  frontend:
+    build: ./frontend
+    container_name: alert-triage-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+volumes:
+  pgdata: 

@@ -172,15 +172,12 @@ with st.sidebar:
     
     # AI Model selection
     st.markdown("### AI Model")
-    model = st.selectbox(
-        "Select Model",
-        [
-            "anthropic/claude-2",
-            "mistralai/Mistral-7B-Instruct-v0.1",
-            "deepseek/deepseek-chat-v3-0324",
-            "deepseek/deepseek-r1-0528",
-            "google/gemini-2.0-flash-exp"
-        ]
+    selected_model = st.session_state.get('selected_model', 'deepseek/deepseek-r1-0528:free')
+    model = st.sidebar.selectbox(
+        "Select AI Model",
+        ["deepseek/deepseek-r1-0528:free", "mistralai/Mistral-7B-Instruct-v0.1"],
+        index=0,
+        key='selected_model'
     )
 
 # Main content
@@ -199,72 +196,36 @@ if st.button("Analyze Logs"):
             # Create analyzer instance
             analyzer = LogAnalyzer()
             
-            # Get the selected model from sidebar
-            selected_model = st.session_state.get('selected_model', 'anthropic/claude-2')
-            
             # Analyze logs with the selected model
-            result = analyzer.analyze_logs(log_text, model=selected_model)
+            result = analyzer.analyze_logs(log_text, model=model)
             
-            if "error" in result:
-                st.error(f"Analysis failed: {result['error']}")
-            else:
-                # Store the analysis result in session state
-                if 'analysis_history' not in st.session_state:
-                    st.session_state.analysis_history = []
+            if "error" not in result:
+                st.success("Analysis completed successfully!")
                 
-                analysis_entry = {
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                    "summary": result["summary"],
-                    "issues": result["issues"],
-                    "model": selected_model
-                }
-                st.session_state.analysis_history.append(analysis_entry)
+                # Display summary
+                st.markdown("### Summary")
+                st.write(result["summary"])
                 
-                # Display results
-                st.markdown("### Analysis Results")
-                st.markdown(f"**Summary:** {result['summary']}")
-                
+                # Display issues
                 if result["issues"]:
                     st.markdown("### Issues Found")
                     for issue in result["issues"]:
                         with st.expander(f"{issue['description']} ({issue['severity']})"):
                             st.markdown(f"**Severity:** {issue['severity']}")
-                            if issue['recommendations']:
-                                st.markdown("**Recommendations:**")
-                                for rec in issue['recommendations']:
-                                    st.markdown(f"- {rec}")
-                            if issue['commands']:
-                                st.markdown("**Commands to fix:**")
-                                for cmd in issue['commands']:
-                                    st.markdown(f"```bash\n{cmd}\n```")
-                            if issue['security_implications']:
-                                st.markdown("**Security Implications:**")
-                                for imp in issue['security_implications']:
-                                    st.markdown(f"- {imp}")
+                            st.markdown(f"**Recommendation:** {issue.get('recommendation', issue.get('recommendations', [''])[0])}")
+                            st.markdown(f"**Command to fix:** {issue.get('command', issue.get('commands', [''])[0])}")
+                            st.markdown(f"**Security implication:** {issue.get('security_implication', issue.get('security_implications', [''])[0])}")
                 
-                # Export options
-                st.markdown("### Export Results")
-                col1, col2 = st.columns(2)
-                with col1:
-                    if st.button("Export as JSON"):
-                        json_str = json.dumps(result, indent=2)
-                        st.download_button(
-                            "Download JSON",
-                            json_str,
-                            file_name="log_analysis.json",
-                            mime="application/json"
-                        )
-                with col2:
-                    if st.button("Export as CSV"):
-                        # Convert issues to DataFrame
-                        issues_df = pd.DataFrame(result["issues"])
-                        csv = issues_df.to_csv(index=False)
-                        st.download_button(
-                            "Download CSV",
-                            csv,
-                            file_name="log_analysis.csv",
-                            mime="text/csv"
-                        )
+                # Store analysis in history
+                analysis_entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "summary": result["summary"],
+                    "issues": result["issues"],
+                    "model": model
+                }
+                st.session_state.analysis_history.append(analysis_entry)
+            else:
+                st.error(f"An error occurred during analysis: {result['error']}")
         except Exception as e:
             st.error(f"An error occurred during analysis: {str(e)}")
     else:

@@ -191,15 +191,10 @@ with st.sidebar:
     
     # AI Model selection
     st.markdown("### AI Model")
-    model = st.selectbox(
-        "Select Model",
-        [
-            "anthropic/claude-2",
-            "mistralai/Mistral-7B-Instruct-v0.1",
-            "deepseek/deepseek-chat-v3-0324",
-            "deepseek/deepseek-r1-0528",
-            "google/gemini-2.0-flash-exp"
-        ]
+    model = st.sidebar.selectbox(
+        "Select AI Model",
+        ["deepseek/deepseek-r1-0528:free", "mistralai/Mistral-7B-Instruct-v0.1"],
+        index=0
     )
 
 # Main content

@@ -1,7 +1,10 @@
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent.parent))
 import unittest
 from unittest.mock import MagicMock, patch
 from sqlalchemy.orm import Session
-from app import crud, models, schemas
+from backend import crud, models, schemas
 
 class TestCRUD(unittest.TestCase):
     def setUp(self):

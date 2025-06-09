@@ -56,7 +56,7 @@ class TestFrontend(unittest.TestCase):
         
         with patch('backend.log_analyzer.LogAnalyzer', return_value=mock_analyzer):
             analyzer = mock_analyzer
-            result = analyzer.analyze_logs("Test log message", model="anthropic/claude-2")
+            result = analyzer.analyze_logs("Test log message", model="deepseek/deepseek-r1-0528:free")
             self.assertIn('summary', result)
             self.assertIn('issues', result)
             self.assertEqual(len(result['issues']), 1)
@@ -122,8 +122,8 @@ class TestFrontend(unittest.TestCase):
         self.assertEqual(mock_session_state.theme, 'light')
         
         # Test model selection
-        mock_session_state.selected_model = 'anthropic/claude-2'
-        self.assertEqual(mock_session_state.selected_model, 'anthropic/claude-2')
+        mock_session_state.selected_model = 'deepseek/deepseek-r1-0528:free'
+        self.assertEqual(mock_session_state.selected_model, 'deepseek/deepseek-r1-0528:free')
         
         # Test analysis history
         mock_session_state.analysis_history = []
